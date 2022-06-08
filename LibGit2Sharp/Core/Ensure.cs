@@ -128,12 +128,13 @@ namespace LibGit2Sharp.Core
                     { GitErrorCode.LockedFile, (m, c) => new LockedFileException(m, c) },
                     { GitErrorCode.NotFound, (m, c) => new NotFoundException(m, c) },
                     { GitErrorCode.Peel, (m, c) => new PeelException(m, c) },
+                    { GitErrorCode.Auth, (m, c) => new AuthenticationException(m, c) },
                 };
 
         private static unsafe void HandleError(int result)
         {
             string errorMessage;
-            GitErrorCategory errorCategory = GitErrorCategory.Unknown;
+            const GitErrorCategory errorCategory = GitErrorCategory.Unknown;
             GitError* error = NativeMethods.git_error_last();
 
             if (error == null)
@@ -255,8 +256,8 @@ namespace LibGit2Sharp.Core
                 return;
             }
 
-            var messageFormat = "No valid git object identified by '{0}' exists in the repository.";
-                                        
+            const string messageFormat = "No valid git object identified by '{0}' exists in the repository.";
+
             if (string.Equals("HEAD", identifier, StringComparison.Ordinal))
             {
                 throw new UnbornBranchException(messageFormat, identifier);
